@@ -8,18 +8,35 @@ import {
   Alert,
   Image,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import ImagePicker, {ImageOrVideo} from 'react-native-image-crop-picker';
+import {useDispatch, useSelector} from 'react-redux';
+import {registerUser} from '../../redux/actions/userAction';
+import { useNavigation } from '@react-navigation/native';
+
 
 type Props = {
   navigation: any;
 };
 
 const SignupScreen = ({navigation}: Props) => {
+  const dispatch = useDispatch();
+  const navigate = useNavigation()
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [avatar, setAvatar] = useState('');
+  const {error, isAuthenticated} = useSelector((state: any) => state.user);
+
+  useEffect(() => {
+    if (error) {
+      Alert.alert(error);
+    }
+    if (isAuthenticated) {
+      Alert.alert('Account creation successfull');
+      navigation.navigate("HomeScreen")
+    }
+  }, [error, isAuthenticated]);
 
   const uploadImage = () => {
     ImagePicker.openPicker({
@@ -33,9 +50,10 @@ const SignupScreen = ({navigation}: Props) => {
     });
   };
 
-
   const submitHandler = (e: any) => {
-    Alert.alert('Login successful');
+    // Alert.alert('Login successful');
+
+    registerUser(name, email, password, avatar)(dispatch);
 
     // ToastAndroid.showWithGravity(
     //   'Login successful',
@@ -71,7 +89,9 @@ const SignupScreen = ({navigation}: Props) => {
           secureTextEntry={true}
         />
 
-        <TouchableOpacity className="flex-row items-center"  onPress={uploadImage}>
+        <TouchableOpacity
+          className="flex-row items-center"
+          onPress={uploadImage}>
           <Image
             source={{
               uri: avatar
@@ -80,9 +100,7 @@ const SignupScreen = ({navigation}: Props) => {
             }}
             className="w-[30px] h-[30px] rounded-full"
           />
-          <Text className="text-black pl-2">
-            Upload image
-          </Text>
+          <Text className="text-black pl-2">Upload image</Text>
         </TouchableOpacity>
 
         <TouchableOpacity className="mt-6">

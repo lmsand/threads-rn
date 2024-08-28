@@ -16,8 +16,10 @@ exports.createUser = catchAsyncErrors(async (req, res, next) => {
         .json({ success: false, message: "User already exists" });
     }
 
+    let myCloud;
+
     if (avatar) {
-      const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+       myCloud = await cloudinary.v2.uploader.upload(avatar, {
         folder: "avatars",
       });
     }

@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createReducer } from '@reduxjs/toolkit';
 
 const initialState = {
   isAuthenticated: false,
@@ -6,104 +6,82 @@ const initialState = {
   isLoading: false,
   user: {},
   users: [],
-  token: '',
+  token: "",
   error: null,
 };
 
-const userSlice = createSlice({
-  name: 'user',
-  initialState,
-  reducers: {
-    userRegisterRequest: state => {
+export const userReducer = createReducer(initialState, builder => {
+  builder
+    .addCase('userRegisterRequest', state => {
       state.loading = true;
       state.isAuthenticated = false;
-    },
-    userRegisterSuccess: (state, action) => {
+    })
+    .addCase('userRegisterSuccess', (state, action) => {
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload;
-    },
-    userRegisterFailed: (state, action) => {
+    })
+    .addCase('userRegisterFailed', (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
       state.error = action.payload;
-    },
-    userLoadRequest: state => {
+    })
+    .addCase('userLoadRequest', state => {
       state.loading = true;
       state.isAuthenticated = false;
-    },
-    userLoadSuccess: (state, action) => {
+    })
+    .addCase('userLoadSuccess', (state, action) => {
       state.loading = false;
       state.isAuthenticated = true;
       state.user = action.payload.user;
       state.token = action.payload.token;
-    },
-    userLoadFailed: (state, action) => {
+    })
+    .addCase('userLoadFailed', (state, action) => {
       state.loading = false;
       state.isAuthenticated = false;
-    },
-    userLoginRequest: state => {
+      state.error = action.payload;
+    })
+    .addCase('userLoginRequest', state => {
       state.isAuthenticated = false;
       state.loading = true;
-    },
-    userLoginSuccess: (state, action) => {
+    })
+    .addCase('userLoginSuccess', (state, action) => {
       state.isAuthenticated = true;
       state.loading = false;
       state.user = action.payload;
-    },
-    userLoginFailed: (state, action) => {
+    })
+    .addCase('userLoginFailed', (state, action) => {
       state.isAuthenticated = false;
       state.loading = false;
       state.error = action.payload;
       state.user = {};
-    },
-    userLogoutRequest: state => {
+    })
+    .addCase('userLogoutRequest', state => {
       state.loading = true;
-    },
-    userLogoutSuccess: state => {
+    })
+    .addCase('userLogoutSuccess', state => {
       state.loading = false;
       state.isAuthenticated = false;
       state.user = {};
-    },
-    userLogoutFailed: state => {
+    })
+    .addCase('userLogoutFailed', state => {
       state.loading = false;
-    },
-    getUsersRequest: state => {
+      state.error = action.payload;
+    })
+    .addCase('getUsersRequest', state => {
       state.isLoading = true;
-    },
-    getUsersSuccess: (state, action) => {
+    })
+    .addCase('getUsersSuccess', (state, action) => {
       state.isLoading = false;
       state.users = action.payload;
-    },
-    getUsersFailed: (state, action) => {
+    })
+    .addCase('getUsersFailed', (state, action) => {
       state.isLoading = false;
-      state.users = action.payload;
-    },
-    clearErrors: state => {
+      state.error = action.payload;
+      state.users = [];
+    })
+    .addCase('clearErrors', state => {
       state.error = null;
-      state.isAuthenticated = false;
-    },
-  },
+      state.isAuthenticated = false
+    });
 });
-
-
-export const {
-  userRegisterRequest,
-  userRegisterSuccess,
-  userRegisterFailed,
-  userLoadRequest,
-  userLoadSuccess,
-  userLoadFailed,
-  userLoginRequest,
-  userLoginSuccess,
-  userLoginFailed,
-  userLogoutRequest,
-  userLogoutSuccess,
-  userLogoutFailed,
-  getUsersRequest,
-  getUsersSuccess,
-  getUsersFailed,
-  clearErrors
-} = userSlice.actions
-
-export default userSlice.reducer

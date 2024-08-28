@@ -1,6 +1,7 @@
 import axios from "axios";
 import { URI } from '../URI'
 import { Dispatch } from "redux";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export const registerUser = (name:string, email:string, password:string, avatar:string) => async (dispatch:Dispatch<any>) => {
   try {
@@ -16,6 +17,8 @@ export const registerUser = (name:string, email:string, password:string, avatar:
       payload: data.user,
     })
 
+
+
   } catch (error:any) {
     dispatch({
       type:"userRegisterFailed",
@@ -23,3 +26,26 @@ export const registerUser = (name:string, email:string, password:string, avatar:
     })
   }
 }
+
+// load user
+export const loadUser = () => async (dispatch: Dispatch<any>) => {
+  try {
+    dispatch({
+      type: "userLoadRequest"
+    })
+
+    const config = {headers: {'Content-Type': 'application/json'}}
+    const {data} = await axios.get(`${URI}/me`)
+
+    dispatch({
+      type:"userLoadSuccess",
+      payload: data.user,
+    })
+
+  } catch (error:any) {
+    dispatch({
+      type:"userLoadFailed",
+      payload: error.response.data.message,
+    })
+  }
+};
